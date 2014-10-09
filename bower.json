@@ -1,0 +1,24 @@
+{
+  "name": "moussaka-client-js",
+  "version": "0.0.1",
+  "authors": [
+    "Sean Dawson <contact@seandawson.info>"
+  ],
+  "description": "A javascript library that allows you to use javascript applications with the Moussaka prototyping framework.",
+  "main": "index.js",
+  "keywords": [
+    "moussaka",
+    "game",
+    "prototyping"
+  ],
+  "license": "MIT",
+  "homepage": "http://noxharmonium.github.io/moussaka/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
