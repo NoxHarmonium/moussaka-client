@@ -5,6 +5,7 @@
   var chance = require('chance').Chance();
   var MockServer = require('./mockServer.js');
   var logger = require('../libs/logger.js');
+  var MockResponses = require('./mockResponses.js');
 
   // Chai Plugins
   var chai = require('chai');
@@ -21,49 +22,104 @@
     var aNumber;
     var aString;
     var aColor;
+    var _id = chance.guid();
+    var mockResponses;
 
-    it('should register vars without error', function(done) {
+    // Setup Intercept
+    var mockServer = new MockServer(function (req, res) {
+      var matchFound = false;
+      for (var pattern in mockResponses.fns) {
+        var regex = new RegExp(pattern,'i');
+        if (regex.test(req.url)) {
+          mockResponses.fns[pattern](req, res);
+          matchFound = true;
+          break;
+        }
+      }
+
+      if (!matchFound) {
+        throw new Error('No matching fn found.');
+      }
+    });
+
+    it('should register vars without error', function() {
       client = chai.factory.create('client');
       aNumber = client.registerVar('aNumber', 5);
       aString = client.registerVar('aString', 'stringme');
       aColor = client.registerVar('aColor', new Color(1, 0, 0, 1));
-      done();
+      mockResponses = new MockResponses(client, _id);
     });
 
-    it('should send correct data to server', function(done) {
-      var _id = chance.apple_token();
+    it('should connect to server', function(done) {
 
-      client.addListener('connect', function(id) {
+      client.addListener('connect', function() {
         expect(client._id).to.eql(_id);
         done();
-      });
-
-      // Intercept
-      var mockServer = new MockServer(function (req, res) {
-
-        // PUT project
-        if ((/\/projects\/.+\/devices\/$/i).test(req.url)) {
-          expect(req.method).to.equal('PUT');
-          expect(req.body)
-            .to.have.property('projectId', client.projectId);
-          expect(req.body)
-            .to.have.property('projectVersion', client.projectVersion);
-          expect(req.body)
-            .to.have.property('deviceName', client.deviceName);
-
-          // Send back _id
-          res.statusCode = 200;
-          var returnString = JSON.stringify({ _id: _id });
-          res.setHeader('Content-Type', 'application/json');
-          res.end(returnString);
-        } else {
-          throw new Exception('Unrecognized url');
-        }
       });
 
       client.connect();
 
     });
+
+    it('should poll regularly', function(done) {
+      logger.info('Waiting for 5 seconds to test polling');
+      setTimeout(function() {
+        // Variability for slow test VMs
+        expect(mockResponses.stats.pollCount)
+          .to.be.within(4, 5);
+        done();
+      }, 5000);
+    });
+
+    it('should apply updates', function(done) {
+      mockResponses.updates = {
+        'aNumber': {
+          values: { n: 50 }
+        },
+        'aString': {
+          values: { s: 'newString' }
+        },
+        'aColor': {
+          values: { r: 0, g: 0, b: 1, a: 0.5 }
+        }
+      };
+
+      logger.info('Waiting for 2 seconds to test updates');
+
+      setTimeout(function() {
+        expect(aNumber.value)
+          .to.eql(50);
+        expect(aString.value)
+          .to.eql('newString');
+        expect(aColor.value)
+          .to.have.property('r', 0);
+        expect(aColor.value)
+          .to.have.property('g', 0);
+        expect(aColor.value)
+          .to.have.property('b', 1);
+        expect(aColor.value)
+          .to.have.property('a', 0.5);
+        done();
+      }, 2000);
+    });
+
+   it('should disconnect without errors and stop polling', function(done) {
+     client.addListener('disconnect', function() {
+        mockResponses.stats.pollCount = 0;
+        logger.info('Waiting for 2 seconds to check if polling stopped');
+          setTimeout(function() {
+            // Variability for slow test VMs
+            expect(mockResponses.stats.pollCount)
+              .to.eql(0);
+            done();
+          }, 2000);
+      });
+
+      client.disconnect();
+
+    });
+
+
 
   });
 

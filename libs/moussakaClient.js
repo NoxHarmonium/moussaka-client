@@ -100,13 +100,13 @@
             'Please pass in a schema object.');
         }
 
-        dataSchema[name] = {
+        variable.schema = {
           type: type
         };
-      } else {
-        dataSchema[name] = variable.schema;
       }
-    });
+
+      dataSchema[name] = variable.schema;
+    }, this);
 
     // Success!
     this.dataSchema = dataSchema;
@@ -156,6 +156,7 @@
 
         if (res.ok) {
           this.connected = false;
+          this.emit('disconnect');
         } else {
           throw new Error('Server returned error: Status: ' +
             res.status + ' Detail:' + res.body.detail);
@@ -180,6 +181,10 @@
   MoussakaClient.prototype.pollFn = function () {
     var url = this.serverUrl + path.join('/projects/',
       this.projectId, 'sessions/', this._id, '/updates/');
+
+    logger.trace('Polling with URL: ' + url);
+
+    this.emit('poll');
 
     if (!this.pollReady) {
       logger.warn('pollFn called before last poll completed. ' +
@@ -230,33 +235,34 @@
 
     _.each(updates, function (update, key) {
       var values = update.values;
-      var variable = this.registedVars[key].ref;
+      var variable = this.registedVars[key];
       var type = variable.schema.type;
+      var ref = variable.ref;
 
       switch (variable.schema.type) {
         // Primitives
       case 'float':
       case 'double':
       case 'decimal':
-        variable.value = values.n;
+        ref.value = values.n;
         break;
       case 'string':
-        variable.value = values.s;
+        ref.value = values.s;
         break;
       case 'boolean':
-        variable.value = values.b;
+        ref.value = values.b;
         break;
       default:
         // Complex Type
-        if (variable.value.setValues) {
-          variable.value.setValues(values);
+        if (ref.value.setValues) {
+          ref.value.setValues(values);
         } else {
           logger.warn('Unsupported variable type: ' + type);
         }
         break;
       }
 
-    });
+    }, this);
 
   };
 

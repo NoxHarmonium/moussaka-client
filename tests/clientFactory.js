@@ -21,8 +21,8 @@
 
     var defaultArgs = {
         deviceName: chance.name(),
-        apiKey: chance.word(),
-        projectId: chance.word(),
+        apiKey: chance.guid(),
+        projectId: chance.guid(),
         projectVersion: chance.word()
     };
 
