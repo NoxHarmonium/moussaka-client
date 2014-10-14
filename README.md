@@ -1,11 +1,14 @@
 moussaka-client-js
 ==================
 
-## A javascript library that allows you to use javascript applications with the [Moussaka](https://github.com/NoxHarmonium/moussaka) prototyping framework.
+#### A javascript library that allows you to use javascript applications with the [Moussaka](https://github.com/NoxHarmonium/moussaka) prototyping framework.
+
+
+#### Installing
 
 It can be used directly in a node application or in the browser as a global object.
 
-#### In Node:
+##### In Node:
 
 Install the package through npm
 
@@ -20,20 +23,16 @@ var MoussakaClient = require('moussaka-client-js');
 var client = new MoussakaClient(opts);
 ```
 
-#### In The Browser:
+##### In The Browser:
 
-Install the package through bower
-
+Install the package through bower. 
 ```bash
 bower install moussaka-client-js
 ```
-
-Then choose your favourite way to load up the module
+The minified and non minified file will be accessable at '/bower_components/moussaka-client-js/dist/'. Then choose your favourite way to load up the module
 
 1. Use browserify and the node module.
-
 2. Consume it with CommonJS
-
 ```javascript
 var MoussakaClient = require('moussaka-client-js.js');
 ```
@@ -42,7 +41,6 @@ var MoussakaClient = require('moussaka-client-js.js');
 <script src="require.js"></script>
 <script src="moussaka-client-js.js"></script>
 ```
-
 ```javascript
 require('moussaka-client-js.js', function (MoussakaClient) {
   var client = new MoussakaClient(opts);
@@ -52,7 +50,6 @@ require('moussaka-client-js.js', function (MoussakaClient) {
 ```html
 <script src="moussaka-client-js.js"></script>
 ```
-
 ```javascript
 var client = new MoussakaClient(opts);
 ```
