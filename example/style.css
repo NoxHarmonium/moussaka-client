@@ -1,0 +1,9 @@
+img.logo{
+    float: left;
+    height: 1em;
+    margin-right: 10px;
+}
+
+div.container {
+    padding-top: 60px;
+}
