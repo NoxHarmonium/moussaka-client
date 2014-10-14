@@ -7,6 +7,7 @@
   var superagent = require('superagent');
   var resolveUrl = require('resolve-url');
   var logger = require('./logger.js');
+  var Ref = require('./ref.js');
 
   // # Required Params
   // deviceName:        The identifier for this client
@@ -39,17 +40,21 @@
 
   };
 
-  MoussakaClient.prototype.registerVar = function (name, variable, schema) {
+  MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
       throw new Error('Variable with that name already registered.');
     }
 
+    var ref = new Ref(value);
+
     this.registedVars[name] = {
-      variable: variable,
+      ref: ref,
       schema: schema
     };
 
     this.updateSchema();
+
+    return ref;
   };
 
   MoussakaClient.prototype.updateSchema = function () {
@@ -62,7 +67,8 @@
       if (!variable.schema) {
         // Create a schema by guessing
         var type = null;
-        switch (typeof (variable.variable)) {
+
+        switch (typeof (variable.ref)) {
         case 'boolean':
           type = 'boolean';
           break;
@@ -72,10 +78,17 @@
         case 'string':
           type = 'string';
           break;
-        default:
+        }
+
+        if (variable.ref.getType) {
+          type = variable.ref.getType();
+        }
+
+        if (!type) {
           throw new Error('Cannot deduce object type. ' +
             'Please pass in a schema object.');
         }
+
         dataSchema[name] = {
           type: type
         };
@@ -160,11 +173,12 @@
 
     this.pollReady = false;
     this.agent.get(url)
-      .end(function(e, res) {
+      .end(function (e, res) {
         this.pollReady = true;
         if (e) {
           if (++this.pollErrorCount > 5) {
-            logger.error('5 poll errors encountered in a row. Disconnecting...');
+            logger.error('5 poll errors encountered in a row. ' +
+              'Disconnecting...');
             this.disconnect();
           }
           throw e;
@@ -172,7 +186,7 @@
 
         if (res.ok) {
           this.pollErrorCount = 0;
-          this.applyUpdate(res.body);
+          this.applyUpdates(res.body);
         } else {
           throw new Error('Server returned error: Status: ' +
             res.status + ' Detail:' + res.body.detail);
@@ -185,16 +199,42 @@
     clearInterval(this.intervalId);
   };
 
-  MoussakaClient.prototype.applyUpdate = function (update) {
-    if (!update) {
-      logger.warn('Update is null.');
+  MoussakaClient.prototype.applyUpdates = function (updates) {
+    if (!updates) {
+      logger.warn('Updates is null.');
       return;
     }
 
-    _.each(update, function(value, key) {
+    _.each(updates, function (update, key) {
+      var values = update.values;
       var variable = this.registedVars[key];
-      // TODO: Apply values (share control code with server)
+      var type = variable.schema.type;
+      // If is complex type
+      //variable.prop.set(x)
+      //_.assign(variable.variable, value.values);
 
+      switch (variable.schema.type) {
+        // Primitives
+      case 'float':
+      case 'double':
+      case 'decimal':
+        variable.ref = values.n;
+        break;
+      case 'string':
+        variable.ref = values.s;
+        break;
+      case 'boolean':
+        variable.ref = values.b;
+        break;
+      default:
+        // Complex Type
+        if (variable.ref.setValues) {
+          variable.ref.setValues(values);
+        } else {
+          logger.warn('Unsupported variable type: ' + type);
+        }
+        break;
+      }
 
     });
 
