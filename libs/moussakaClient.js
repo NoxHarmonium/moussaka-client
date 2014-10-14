@@ -76,7 +76,7 @@
         var ref = variable.ref;
 
         logger.trace('Updating schema with: ' + name);
-        logger.trace('Type: ' + typeof(ref.value));
+        logger.trace('Type: ' + typeof (ref.value));
         logger.trace('Complex: ' + !!ref.value.getType);
 
         switch (typeof (ref.value)) {
@@ -212,7 +212,7 @@
 
   MoussakaClient.prototype.stopPolling = function () {
     logger.trace('Stopping polling');
-    if (!this.intervalId && this.polling){
+    if (!this.intervalId && this.polling) {
       throw new Error('Polling started but no intervalId.');
     }
     if (!this.intervalId || !this.polling) {

@@ -17,26 +17,32 @@
 
   describe('client tests', function() {
 
+    var client;
+    var aNumber;
+    var aString;
+    var aColor;
+
+    it('should register vars without error', function(done) {
+      client = chai.factory.create('client');
+      aNumber = client.registerVar('aNumber', 5);
+      aString = client.registerVar('aString', 'stringme');
+      aColor = client.registerVar('aColor', new Color(1, 0, 0, 1));
+      done();
+    });
+
     it('should send correct data to server', function(done) {
-      var client = chai.factory.create('client');
-      var aNumber = client.registerVar('aNumber', 5);
-      var aString = client.registerVar('aString', 'stringme');
-      var aColor = client.registerVar('aColor', new Color(1, 0, 0, 1));
       var _id = chance.apple_token();
-      var started = false;
 
       client.addListener('connect', function(id) {
         expect(client._id).to.eql(_id);
-        // Stop Server
-        mockServer.server.close(done);
+        done();
       });
 
-
+      // Intercept
       var mockServer = new MockServer(function (req, res) {
 
-        // Initialise
-        if (!started) {
-          expect(req.url).to.match(/\/projects\/.+\/devices\/$/);
+        // PUT project
+        if ((/\/projects\/.+\/devices\/$/i).test(req.url)) {
           expect(req.method).to.equal('PUT');
           expect(req.body)
             .to.have.property('projectId', client.projectId);
@@ -50,9 +56,9 @@
           var returnString = JSON.stringify({ _id: _id });
           res.setHeader('Content-Type', 'application/json');
           res.end(returnString);
-          started = true;
+        } else {
+          throw new Exception('Unrecognized url');
         }
-
       });
 
       client.connect();
