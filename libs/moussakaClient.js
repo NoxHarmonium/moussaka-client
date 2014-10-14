@@ -5,9 +5,11 @@
   var utils = require('./utils.js');
   var _ = require('lodash');
   var superagent = require('superagent');
-  var resolveUrl = require('resolve-url');
   var logger = require('./logger.js');
   var Ref = require('./ref.js');
+  var path = require('path');
+  // works in node and browser
+  var EventEmitter = require('wolfy87-eventemitter');
 
   // # Required Params
   // deviceName:        The identifier for this client
@@ -18,12 +20,13 @@
   // serverUrl:         The server url (default: localhost:80)
   // pollInterval:      The rate to poll the server for updates (in ms)
   var MoussakaClient = function (opts) {
+
     utils.validateRequiredOptions(opts, ['deviceName', 'apiKey',
       'projectId', 'projectVersion'
     ]);
 
     // Defaults
-    this.serverUrl = 'localhost:80';
+    this.serverUrl = 'http://localhost:3000/';
     this.pollInterval = 1000; //ms
 
     _.assign(this, opts);
@@ -33,12 +36,15 @@
     this.connected = false;
     this.dataSchema = {};
     this.agent = superagent.agent();
-    this.polling = true;
+    this.polling = false;
     this.intervalId = null;
     this.pollErrorCount = 0;
     this.pollReady = true;
 
   };
+
+  // Inherit EventEmitter
+  MoussakaClient.prototype = _.clone(EventEmitter.prototype);
 
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
@@ -67,8 +73,13 @@
       if (!variable.schema) {
         // Create a schema by guessing
         var type = null;
+        var ref = variable.ref;
 
-        switch (typeof (variable.ref)) {
+        logger.trace('Updating schema with: ' + name);
+        logger.trace('Type: ' + typeof(ref.value));
+        logger.trace('Complex: ' + !!ref.value.getType);
+
+        switch (typeof (ref.value)) {
         case 'boolean':
           type = 'boolean';
           break;
@@ -80,8 +91,8 @@
           break;
         }
 
-        if (variable.ref.getType) {
-          type = variable.ref.getType();
+        if (ref.value.getType) {
+          type = ref.value.getType();
         }
 
         if (!type) {
@@ -102,7 +113,7 @@
   };
 
   MoussakaClient.prototype.connect = function () {
-    var url = resolveUrl(this.serverUrl, '/projects/',
+    var url = this.serverUrl + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
     this.agent.put(url)
@@ -119,6 +130,8 @@
         if (res.ok) {
           this.connected = true;
           this._id = res.body._id;
+          logger.trace('Connected!: _id: ' + this._id);
+          this.emit('connect', this._id);
           this.beginPolling();
         } else {
           throw new Error('Server returned error: Status: ' +
@@ -129,7 +142,7 @@
   };
 
   MoussakaClient.prototype.disconnect = function () {
-    var url = resolveUrl(this.serverUrl, '/projects/',
+    var url = this.serverUrl + path.join('/projects/',
       this.projectId, 'devices/', this._id, '/');
     logger.trace('Disconnecting device at: ' + url);
 
@@ -157,13 +170,15 @@
         'connect function.');
     }
 
+    logger.trace('Starting polling');
+
     this.intervalId = setInterval(this.pollFn.bind(this),
       this.pollInterval);
-
+    this.polling = true;
   };
 
   MoussakaClient.prototype.pollFn = function () {
-    var url = resolveUrl(this.serverUrl, '/projects/',
+    var url = this.serverUrl + path.join('/projects/',
       this.projectId, 'sessions/', this._id, '/updates/');
 
     if (!this.pollReady) {
@@ -196,7 +211,15 @@
   };
 
   MoussakaClient.prototype.stopPolling = function () {
+    logger.trace('Stopping polling');
+    if (!this.intervalId && this.polling){
+      throw new Error('Polling started but no intervalId.');
+    }
+    if (!this.intervalId || !this.polling) {
+      throw new Error('Polling has not been started.');
+    }
     clearInterval(this.intervalId);
+    this.polling = false;
   };
 
   MoussakaClient.prototype.applyUpdates = function (updates) {
@@ -207,29 +230,26 @@
 
     _.each(updates, function (update, key) {
       var values = update.values;
-      var variable = this.registedVars[key];
+      var variable = this.registedVars[key].ref;
       var type = variable.schema.type;
-      // If is complex type
-      //variable.prop.set(x)
-      //_.assign(variable.variable, value.values);
 
       switch (variable.schema.type) {
         // Primitives
       case 'float':
       case 'double':
       case 'decimal':
-        variable.ref = values.n;
+        variable.value = values.n;
         break;
       case 'string':
-        variable.ref = values.s;
+        variable.value = values.s;
         break;
       case 'boolean':
-        variable.ref = values.b;
+        variable.value = values.b;
         break;
       default:
         // Complex Type
-        if (variable.ref.setValues) {
-          variable.ref.setValues(values);
+        if (variable.value.setValues) {
+          variable.value.setValues(values);
         } else {
           logger.warn('Unsupported variable type: ' + type);
         }
@@ -240,6 +260,6 @@
 
   };
 
-  return MoussakaClient;
+  module.exports = MoussakaClient;
 
 })(require, module);
