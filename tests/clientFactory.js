@@ -1,7 +1,7 @@
 (function (require, module) {
   'use strict';
 
-  var MoussakaClient = require('../libs/MoussakaClient.js');
+  var MoussakaClient = require('../libs/moussakaClient.js');
   var chance = require('chance').Chance();
   var _ = require('lodash');
 
