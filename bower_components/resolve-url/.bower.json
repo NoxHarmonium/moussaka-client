@@ -1,0 +1,28 @@
+{
+  "name": "resolve-url",
+  "version": "0.2.1",
+  "description": "Like Node.js’ `path.resolve`/`url.resolve` for the browser.",
+  "authors": [
+    "Simon Lydell"
+  ],
+  "license": "MIT",
+  "main": "resolve-url.js",
+  "keywords": [
+    "resolve",
+    "url"
+  ],
+  "ignore": [
+    ".*"
+  ],
+  "homepage": "https://github.com/lydell/resolve-url",
+  "_release": "0.2.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.1",
+    "commit": "9e5ff523aa43de5f0de16412565c1501e524c4cd"
+  },
+  "_source": "git://github.com/lydell/resolve-url.git",
+  "_target": "~0.2.1",
+  "_originalSource": "resolve-url",
+  "_direct": true
+}

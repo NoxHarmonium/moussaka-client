@@ -8,11 +8,26 @@
   var Logger = function () {};
 
   Logger.prototype.severity = {
-    'trace': 0,
-    'info': 1,
-    'warning': 2,
-    'error': 3,
-    'exception': 4
+    'trace': {
+      label: 'trace',
+      level: 0
+    },
+    'info': {
+      label: 'info',
+      level: 1
+    },
+    'warning': {
+      label: 'warning',
+      level: 2
+    },
+    'error': {
+      label: 'error',
+      level: 3
+    },
+    'exception': {
+      label: 'exception',
+      level: 4
+    }
   };
 
   Logger.prototype.log = function (severity, msg) {
@@ -26,7 +41,7 @@
 
     console.log(sprintf('[%s] [%s]: %s', (new Date())
       .toLocaleTimeString(),
-      severity,
+      severity.label,
       msg));
 
   };
@@ -46,7 +61,7 @@
     this.log(this.severity.exception, msg);
   };
 
-  module.exports = Logger;
+  module.exports = new Logger();
 
 
 })(require, module);
