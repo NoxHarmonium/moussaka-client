@@ -52,7 +52,7 @@
 
     it('should connect to server', function(done) {
 
-      client.addListener('connect', function() {
+      client.on('connect', function() {
         expect(client._id).to.eql(_id);
         done();
       });
@@ -104,7 +104,7 @@
     });
 
    it('should disconnect without errors and stop polling', function(done) {
-     client.addListener('disconnect', function() {
+     client.on('disconnect', function() {
         mockResponses.stats.pollCount = 0;
         logger.info('Waiting for 2 seconds to check if polling stopped');
           setTimeout(function() {

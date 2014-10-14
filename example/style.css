@@ -7,3 +7,41 @@ img.logo{
 div.container {
     padding-top: 60px;
 }
+
+div#renderer {
+    border: 1px solid #DDDDDD;
+}
+
+div#renderer, canvas {
+    width: 100%;
+    height: 100%;
+}
+
+div#errorbox > p{
+    color: red;
+}
+
+
+.hidden {
+    display: none;
+}
+
+.accordion-toggle {cursor: pointer;}
+.accordion-content {display: none;}
+.accordion-content.default {display: block;}
+
+.accordion-toggle .toggleClose {
+    display: none;
+}
+
+.accordion-toggle .toggleOpen {
+    display: inline;
+}
+
+.accordion-toggle.toggled .toggleClose {
+    display: inline;
+}
+
+.accordion-toggle.toggled .toggleOpen {
+    display: none;
+}

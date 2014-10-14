@@ -22,10 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "lodash": "~2.4.1",
-    "superagent": "~0.20.0",
-    "eventEmitter": "~4.2.9",
     "skeleton": "*",
-    "sprintf": "~1.0.0"
+    "three.js": "*"
   }
 }

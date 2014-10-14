@@ -10,16 +10,89 @@
     </head>
     <body>
         <div class="container">
-            <h1><img class="logo" src='./logo-s.png' alt="Moussaka Logo" /> Moussaka</h1>
-            <h3>Javascript Client Example</h3>
+            <div class="row">
+                <div class="twelve columns">
+                    <h1><img class="logo" src='./logo-s.png' alt="Moussaka Logo" /> Moussaka</h1>
+                    <h3>Javascript Client Example</h3>
+                    <p>This HTML document lets you test Moussaka without a device running Unity 3D. It was made for debugging Moussaka but can also be used as an example to write your own javascript game powered by Moussaka if you were that way inclined.</p>
+                </div>
+            </div>
+
+
+            <h4 class="accordion-toggle toggled">
+                Controls
+                <span class="toggleClose">-</span>
+                <span class="toggleOpen">+</span>
+            </h4>
+            <hr>
+            <div class="accordion-content default">
+                <div class="row">
+                    <div class="six columns">
+                        <form>
+                            <fieldset>
+                                <legend><h4>Basic Options</h4></legend>
+                                <label for="txtDeviceName">Device Name</label>
+                                <input type="text" id="txtDeviceName" value="Moussaka Example Device"/>
+                                <label for="txtApiKey">API Key</label>
+                                <input type="text" id="txtApiKey" value=""/>
+                                <label for="txtProjectId">Project ID</label>
+                                <input type="text" id="txtProjectId" value=""/>
+                                <label for="txtProjectVersion">Project Version</label>
+                                <input type="text" id="txtProjectVersion" value=""/>
+                            </fieldset>
+
+                        </form>
+                    </div>
+                    <div class="six columns">
+                        <form>
+                            <fieldset>
+                                <legend><h4>Advanced Options</h4></legend>
+                                <label for="txtServerUrl">Server URL</label>
+                                <input type="text" id="txtServerUrl" value=""/>
+                                <label for="txtPollInterval">Poll Interval</label>
+                                <input type="number" id="txtPollInterval" value="1000" min="1"/>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="twelve columns">
+                        <button onclick="exampleGame.tryConnect()">Connect</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="twelve columns">
+                        <div id="errorbox">
+                            <h5 class="hidden">An exception was thrown:</h5>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="accordion-toggle toggled">
+                Game Simulation
+                <span class="toggleClose">-</span>
+                <span class="toggleOpen">+</span>
+            </h4>
+            <hr>
+            <div class="accordion-content default">
+                <div class="row">
+                    <div class="twelve columns">
+                        <div id="renderer"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Dependencies: Make sure you run # bower install to fetch them -->
-        <script type="text/javascript" src="../bower_components/eventEmitter/EventEmitter.js" ></script>
-        <script type="text/javascript" src="../bower_components/lodash/dist/lodash.js"></script>
-        <script type="text/javascript" src="../bower_components/sprintf/src/sprintf.js"></script>
-        <script type="text/javascript" src="../bower_components/superagent/superagent.js" ></script>
+        <script type="text/javascript" src="../bower_components/jquery/dist/jquery.js" ></script>
+        <script type="text/javascript" src="../bower_components/three.js/three.js" ></script>
         <!-- Main application -->
         <script type="text/javascript" src="../dist/moussaka-client-js.js" ></script>
+        <script type="text/javascript" src="./example.js" ></script>
     </body>
 </html>

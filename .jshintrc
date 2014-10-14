@@ -23,7 +23,9 @@
       "angular": true, //angular
       "window": true, //browserify scripts
       "jQuery": true, // jquery
-      "$": true // jquery
+      "$": true, // jquery
+      "document": true, // browser
+      "THREE": true // THREE.js
     },
     "node": true,
     "devel": true

@@ -4,7 +4,7 @@
 
   var logger = require('./libs/logger.js');
   var MoussakaClient = require('./libs/moussakaClient.js');
-
+  logger.trace('MoussakaClient module loaded.');
   module.exports = MoussakaClient;
 
 })(require, module);

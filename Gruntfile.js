@@ -9,14 +9,15 @@
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-glue-js');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-browserify');
 
     // Define config
     var config = {};
 
     var paths = {
-      allJs: ['*.js', 'libs/**/*.js'],
-      glueSrc: ['index.js', 'libs/**/*.js', 'node_modules/sprintf-js/'],
-      glueDest: 'dist/<%= pkg.name %>.js',
+      allJs: ['*.js', 'libs/**/*.js', 'example/example.js'],
+      browserifySrc: ['index.js'],
+      browserifyDest: 'dist/<%= pkg.name %>.js',
       uglifyDest: 'dist/<%= pkg.name %>.min.js',
     };
 
@@ -35,16 +36,15 @@
       }
     };
 
-    config.gluejs = {
-      moussaka_client: {
-        options: {
-          export: 'moussaka',
-          main: 'index.js',
-        },
-        src: paths.glueSrc,
-        dest: paths.glueDest
+    config.browserify = {
+      options: {
+        browserifyOptions: {
+          standalone: 'MoussakaClient'
+        }
       }
     };
+    config.browserify[paths.browserifyDest] =
+      paths.browserifySrc;
 
     config.uglify = {
       options: {
@@ -52,12 +52,12 @@
           '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
       moussaka_client: {
-        files: {}
+        files: {} // See below
       }
     };
 
     config.uglify.moussaka_client
-      .files[paths.uglifyDest] = [paths.glueDest];
+      .files[paths.uglifyDest] = [paths.browserifyDest];
 
     // Read in package.json for templating
     config.pkg = grunt.file.readJSON('package.json');
@@ -67,7 +67,7 @@
 
     // Define tasks
     grunt.registerTask('lint', ['jshint:all', 'jsbeautifier:all']);
-    grunt.registerTask('compile', ['lint', 'gluejs', 'uglify']);
+    grunt.registerTask('compile', ['lint', 'browserify', 'uglify']);
     grunt.registerTask('default', ['compile']);
   };
 

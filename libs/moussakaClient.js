@@ -8,8 +8,11 @@
   var logger = require('./logger.js');
   var Ref = require('./ref.js');
   var path = require('path');
-  // works in node and browser
-  var EventEmitter = require('wolfy87-eventemitter');
+  var EventEmitter = require('events')
+    .EventEmitter;
+  var inherits = require('util')
+    .inherits;
+
 
   // # Required Params
   // deviceName:        The identifier for this client
@@ -35,7 +38,6 @@
     this.registedVars = {};
     this.connected = false;
     this.dataSchema = {};
-    this.agent = superagent.agent();
     this.polling = false;
     this.intervalId = null;
     this.pollErrorCount = 0;
@@ -44,7 +46,7 @@
   };
 
   // Inherit EventEmitter
-  MoussakaClient.prototype = _.clone(EventEmitter.prototype);
+  inherits(MoussakaClient, EventEmitter);
 
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
@@ -116,7 +118,7 @@
     var url = this.serverUrl + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
-    this.agent.put(url)
+    superagent.put(url)
       .send({
         projectId: this.projectId,
         projectVersion: this.projectVersion,
@@ -124,6 +126,7 @@
       })
       .end(function (e, res) {
         if (e) {
+          this.emit('error', e);
           throw e;
         }
 
@@ -134,8 +137,10 @@
           this.emit('connect', this._id);
           this.beginPolling();
         } else {
-          throw new Error('Server returned error: Status: ' +
+          var error = new Error('Server returned error: Status: ' +
             res.status + ' Detail:' + res.body.detail);
+          this.emit('error', error);
+          throw error;
         }
 
       }.bind(this));
@@ -148,9 +153,10 @@
 
     this.stopPolling();
 
-    this.agent.del(url)
+    superagent.del(url)
       .end(function (e, res) {
         if (e) {
+          this.emit('error', e);
           throw e;
         }
 
@@ -158,8 +164,10 @@
           this.connected = false;
           this.emit('disconnect');
         } else {
-          throw new Error('Server returned error: Status: ' +
+          var error = new Error('Server returned error: Status: ' +
             res.status + ' Detail:' + res.body.detail);
+          this.emit('error', error);
+          throw error;
         }
 
       }.bind(this));
@@ -192,7 +200,7 @@
     }
 
     this.pollReady = false;
-    this.agent.get(url)
+    superagent.get(url)
       .end(function (e, res) {
         this.pollReady = true;
         if (e) {
@@ -201,6 +209,7 @@
               'Disconnecting...');
             this.disconnect();
           }
+          this.emit('error', e);
           throw e;
         }
 
@@ -208,8 +217,10 @@
           this.pollErrorCount = 0;
           this.applyUpdates(res.body);
         } else {
-          throw new Error('Server returned error: Status: ' +
+          var error = new Error('Server returned error: Status: ' +
             res.status + ' Detail:' + res.body.detail);
+          this.emit('error', error);
+          throw error;
         }
 
       }.bind(this));
