@@ -261,7 +261,7 @@
 
         if (res.ok) {
           this.pollErrorCount = 0;
-          this.applyUpdates(res.body);
+          this.applyUpdates(res.body.data);
         } else {
           return this.emit('error',
             new Error('Server returned error: Status: ' +

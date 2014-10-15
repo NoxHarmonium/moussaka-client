@@ -43,7 +43,7 @@
 
                 // Send back _id
                 res.statusCode = 200;
-                var returnString = JSON.stringify(that.updates);
+                var returnString = JSON.stringify({data: that.updates});
                 that.updates = {};
                 res.setHeader('Content-Type', 'application/json');
                 res.end(returnString);
@@ -55,7 +55,7 @@
 
                 // Send back _id
                 res.statusCode = 200;
-                var returnString = '{}';
+                var returnString = '{data:{}}';
                 res.setHeader('Content-Type', 'application/json');
                 res.end(returnString);
             },
