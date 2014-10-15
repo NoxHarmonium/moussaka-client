@@ -16,6 +16,8 @@
         this.fns = {
             '\/projects\/.+\/devices\/$': function(req, res) {
                 expect(req.method).to.equal('PUT');
+                expect(req.headers)
+                    .to.have.property('apikey');
                 expect(req.body)
                     .to.have.property('projectId', client.projectId);
                 expect(req.body)
@@ -31,6 +33,8 @@
             },
             '\/projects\/.+\/sessions\/.+\/updates\/$': function(req, res) {
                 expect(req.method).to.equal('GET');
+                expect(req.headers)
+                    .to.have.property('apikey');
                 that.stats.pollCount++;
 
                 // Send back _id
@@ -42,6 +46,8 @@
            },
            '\/projects\/.+\/devices\/.+\/$': function(req, res) {
                 expect(req.method).to.equal('DELETE');
+                expect(req.headers)
+                    .to.have.property('apikey');
 
                 // Send back _id
                 res.statusCode = 200;
