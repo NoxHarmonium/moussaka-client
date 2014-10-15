@@ -24,11 +24,12 @@
   // pollInterval:      The rate to poll the server for updates (in ms)
   var MoussakaClient = function (opts) {
 
-    utils.validateRequiredOptions(opts, ['deviceName', 'apiKey',
-      'projectId', 'projectVersion'
-    ]);
-
     // Defaults
+    this.deviceName = null;
+    this.apiKey = null;
+    this.projectId = null;
+    this.projectVersion = null;
+
     this.serverUrl = 'http://localhost:3000/';
     this.pollInterval = 1000; //ms
 
@@ -141,6 +142,10 @@
   };
 
   MoussakaClient.prototype.connect = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
@@ -170,6 +175,10 @@
   };
 
   MoussakaClient.prototype.disconnect = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/', this._id, '/');
     logger.trace('Disconnecting device at: ' + url);
@@ -207,6 +216,10 @@
   };
 
   MoussakaClient.prototype.pollFn = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'sessions/', this._id, '/updates/');
 
