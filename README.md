@@ -42,7 +42,7 @@ moussaka-client-js
 To instantiate MoussakaClient you must pass in an object with the following keys.
 
 | Option            | Desciption                                                                                    | Default                 |
-| ----------------- |:---------------------------------------------------------------------------------------------:| -----------------------:|
+| ----------------- |-----------------------------------------------------------------------------------------------|-------------------------|
 | deviceName        | The name of the device (i.e. John Smith's PC)                                                 | None                    |
 | apiKey            | The user API key retreived from the user account settings in Moussaka.                        | None                    |
 | projectId         | The project ID retreived from the project view page in Moussaka.                              | None                    |
@@ -70,16 +70,15 @@ var client = new MoussakaClient(opts);
 ```
 
 ##### In The Browser:
-There are a few ways you can use it in the browser. First you should install the package through bower. 
+There are a few ways you can use it in the browser:
+
+Get the package through bower:
 ```bash
 bower install moussaka-client-js
 ```
-The library bundle will be accessible at '/bower_components/moussaka-client-js/dist/moussaka-client-js[.min].js'. Then choose your favourite way to load up the module:
+The library bundle will be accessible at '/bower_components/moussaka-client-js/dist/moussaka-client-js[.min].js'. 
+Then choose your favourite way to load up the module:
 
-- Use browserify and the node module.
-```javascript
-var MoussakaClient = require('moussaka-client-js');
-```
 - Consume it with CommonJS
 ```javascript
 var MoussakaClient = require('/path/to/moussaka-client-js.js');
@@ -101,6 +100,9 @@ require('moussaka-client-js.js', function (MoussakaClient) {
 ```javascript
 var client = new MoussakaClient(opts);
 ```
+
+- You could also just use the npm modulein node and use Browserify to build your node application for the browser.
+
 
 
 
