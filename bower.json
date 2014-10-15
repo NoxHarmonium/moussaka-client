@@ -22,7 +22,5 @@
     "tests"
   ],
   "dependencies": {
-    "skeleton": "*",
-    "three.js": "*"
   }
 }
