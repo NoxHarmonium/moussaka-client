@@ -52,6 +52,12 @@
       mockResponses = new MockResponses(client, _id);
     });
 
+    it('should throw error if missing var', function() {
+      var badClient = chai.factory.create('client', { projectId: null });
+      expect(badClient.connect)
+        .to.throw(Error);
+    });
+
     it('should connect to server', function(done) {
 
       client.on('connect', function() {
