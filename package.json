@@ -1,6 +1,6 @@
 {
-  "name": "moussaka-client-js",
-  "version": "0.0.1",
+  "name": "moussaka-client",
+  "version": "0.1.0",
   "description": "A javascript library that allows you to use javascript applications with the Moussaka prototyping framework.",
   "main": "index.js",
   "scripts": {
@@ -41,5 +41,8 @@
     "grunt-jsbeautifier": "^0.2.7",
     "jshint-stylish": "^1.0.0",
     "mocha": "^1.21.5"
+  },
+  "directories": {
+    "lib": "libs"
   }
 }

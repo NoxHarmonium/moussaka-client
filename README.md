@@ -1,4 +1,4 @@
-moussaka-client-js
+moussaka-client
 ==================
 
 #### A javascript library that allows you to use javascript applications with the [Moussaka](https://github.com/NoxHarmonium/moussaka) prototyping framework.
@@ -7,32 +7,32 @@ moussaka-client-js
 ```javascript
   // Instantiate client
   var client = new MoussakaClient(opts);
-  
+
   // Auto detect variable type
   var aNumber = client.registerVar('aNumber', 5);
   var aString = client.registerVar('aString', 'string beans');
   var aColor  = client.registerVar('aColor', new Color(1, 0, 0, 1)); // Moussaka type
-  
+
   // Define specific schema
   var validatedNumber = client.registerVar('validatedNumber', 5, {
     type: 'float',
     min: 0,
     max: 100
   });
-  
+
   // Start polling
   client.connect();
-  
+
   while(running) {
-    // Use Moussaka to adjust variables, MoussakaClient will poll for updates 
+    // Use Moussaka to adjust variables, MoussakaClient will poll for updates
     // and update the values accordingly.
-    
+
     console.log(aNumber.value);
     console.log(aNumber.aString);
     console.log(aNumber.aColor.toString());
     console.log(aNumber.validatedNumber);
   }
-  
+
   // Stop polling afterwards
   client.disconnect();
 ```
@@ -59,13 +59,13 @@ It can be used directly in a node application or in the browser.
 - Install the package through npm
 
 ```bash
-npm install moussaka-client-js
+npm install moussaka-client
 ```
 
 - Load the module
 
 ```javascript
-var MoussakaClient = require('moussaka-client-js');
+var MoussakaClient = require('moussaka-client');
 var client = new MoussakaClient(opts);
 ```
 
@@ -74,34 +74,34 @@ There are a few ways you can use it in the browser:
 
 Get the package through bower:
 ```bash
-bower install moussaka-client-js
+bower install moussaka-client
 ```
-The library bundle will be accessible at '/bower_components/moussaka-client-js/dist/moussaka-client-js[.min].js'. 
+The library bundle will be accessible at '/bower_components/moussaka-client/dist/moussaka-client[.min].js'.
 Then choose your favourite way to load up the module:
 
 - Consume it with CommonJS
 ```javascript
-var MoussakaClient = require('/path/to/moussaka-client-js.js');
+var MoussakaClient = require('/path/to/moussaka-client.js');
 ```
 - Consume it with RequireJS
 ```html
 <script src="require.js"></script>
-<script src="/path/to/moussaka-client-js.js"></script>
+<script src="/path/to/moussaka-client.js"></script>
 ```
 ```javascript
-require('moussaka-client-js.js', function (MoussakaClient) {
+require('moussaka-client.js', function (MoussakaClient) {
   var client = new MoussakaClient(opts);
 });
 ```
 - Just use it as a global on the window object
 ```html
-<script src="/path/to/moussaka-client-js.js"></script>
+<script src="/path/to/moussaka-client.js"></script>
 ```
 ```javascript
 var client = new MoussakaClient(opts);
 ```
 
-- You could also just use the npm modulein node and use Browserify to build your node application for the browser.
+- You could also just use the npm module in node and use Browserify to build your node application for the browser.
 
 
 
