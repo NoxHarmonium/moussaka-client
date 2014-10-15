@@ -4,7 +4,8 @@
   "description": "A javascript library that allows you to use javascript applications with the Moussaka prototyping framework.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -t 20000 tests/test.js"
+    "test": "./node_modules/mocha/bin/_mocha -t 20000 tests/test.js",
+    "coveralls": "./gencoverage.sh"
   },
   "repository": {
     "type": "git",
@@ -32,13 +33,15 @@
     "chai-js-factories": "^0.1.4",
     "chance": "^0.6.1",
     "connect": "^3.2.0",
+    "coveralls": "^2.11.2",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.0.1",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-jsbeautifier": "^0.2.7",
     "jshint-stylish": "^1.0.0",
-    "mocha": "^1.21.5"
+    "mocha": "^1.21.5",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "directories": {
     "lib": "libs"
