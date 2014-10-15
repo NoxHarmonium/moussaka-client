@@ -149,12 +149,14 @@
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
+
     superagent.put(url)
       .send({
         projectId: this.projectId,
         projectVersion: this.projectVersion,
         deviceName: this.deviceName
       })
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         if (e) {
           return this.emit('error', e);
@@ -186,6 +188,7 @@
     this.stopPolling();
 
     superagent.del(url)
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         if (e) {
           return this.emit('error', e);
@@ -234,6 +237,7 @@
 
     this.pollReady = false;
     superagent.get(url)
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         this.pollReady = true;
         if (e) {
