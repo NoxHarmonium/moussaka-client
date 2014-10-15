@@ -13,7 +13,7 @@
   ],
   "license": "MIT",
   "homepage": "http://noxharmonium.github.io/moussaka/",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
