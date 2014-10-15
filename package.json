@@ -4,7 +4,7 @@
   "description": "A javascript library that allows you to use javascript applications with the Moussaka prototyping framework.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/_mocha -t 20000 tests/test.js",
+    "test": "./node_modules/mocha/bin/_mocha -t 20000 -b tests/test.js",
     "coveralls": "./gencoverage.sh"
   },
   "repository": {
