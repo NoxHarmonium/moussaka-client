@@ -24,6 +24,8 @@
     var aColor;
     var _id = chance.guid();
     var mockResponses;
+    var pollInterval = 50;
+    var pollsToCheck = 5;
 
     // Setup Intercept
     var mockServer = new MockServer(function (req, res) {
@@ -43,7 +45,7 @@
     }, 3333);
 
     it('should register vars without error', function() {
-      client = chai.factory.create('client');
+      client = chai.factory.create('client', { pollInterval: 50 });
       aNumber = client.registerVar('aNumber', 5);
       aString = client.registerVar('aString', 'stringme');
       aColor = client.registerVar('aColor', new Color(1, 0, 0, 1));
@@ -62,13 +64,14 @@
     });
 
     it('should poll regularly', function(done) {
-      logger.info('Waiting for 5 seconds to test polling');
+      logger.info('Waiting to test polling');
+      mockResponses.stats.pollCount = 0;
       setTimeout(function() {
         // Variability for slow test VMs
         expect(mockResponses.stats.pollCount)
-          .to.be.within(4, 5);
+          .to.be.within(pollsToCheck - 1, pollsToCheck + 1);
         done();
-      }, 5000);
+      }, pollInterval * pollsToCheck);
     });
 
     it('should apply updates', function(done) {
@@ -84,7 +87,7 @@
         }
       };
 
-      logger.info('Waiting for 2 seconds to test updates');
+      logger.info('Waiting for to test updates');
 
       setTimeout(function() {
         expect(aNumber.value)
@@ -100,19 +103,19 @@
         expect(aColor.value)
           .to.have.property('a', 0.5);
         done();
-      }, 2000);
+      }, pollInterval * 5);
     });
 
    it('should disconnect without errors and stop polling', function(done) {
      client.on('disconnect', function() {
         mockResponses.stats.pollCount = 0;
-        logger.info('Waiting for 2 seconds to check if polling stopped');
+        logger.info('Waiting to check if polling stopped');
           setTimeout(function() {
             // Variability for slow test VMs
             expect(mockResponses.stats.pollCount)
               .to.eql(0);
             done();
-          }, 2000);
+          }, pollInterval * 5);
       });
 
       client.disconnect();
