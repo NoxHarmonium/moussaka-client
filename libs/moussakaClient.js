@@ -36,7 +36,7 @@
     _.assign(this, opts);
 
     // Fields
-    this.registedVars = {};
+    this.registeredVars = {};
     this.connected = false;
     this.dataSchema = {};
     this.polling = false;
@@ -77,20 +77,20 @@
 
   MoussakaClient.prototype.getStateSnapshot = function () {
     var snapshot = {};
-    _.each(this.registedVars, function(registeredVar, name) {
+    _.each(this.registeredVars, function (registeredVar, name) {
       snapshot[name] = registeredVar.ref.value;
     });
     return snapshot;
   };
 
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
-    if (this.registedVars[name]) {
+    if (this.registeredVars[name]) {
       throw new Error('Variable with that name already registered.');
     }
 
     var ref = new Ref(value);
 
-    this.registedVars[name] = {
+    this.registeredVars[name] = {
       ref: ref,
       schema: schema
     };
@@ -106,7 +106,7 @@
     }
 
     var dataSchema = {};
-    _.each(this.registedVars, function (variable, name) {
+    _.each(this.registeredVars, function (variable, name) {
       if (!variable.schema) {
         // Create a schema by guessing
         var type = null;
@@ -291,7 +291,7 @@
 
     _.each(updates, function (update, key) {
       var values = update.values;
-      var variable = this.registedVars[key];
+      var variable = this.registeredVars[key];
       var type = variable.schema.type;
       var ref = variable.ref;
 
