@@ -48,6 +48,17 @@
   // Inherit EventEmitter
   inherits(MoussakaClient, EventEmitter);
 
+  MoussakaClient.prototype.getBaseUrl = function () {
+    if (!this.serverUrl) {
+      throw new Error('Server URL not defined.');
+    }
+    var str = this.serverUrl;
+    if (str.substr(-1) === '/') {
+      return str.substr(0, str.length - 1);
+    }
+    return str;
+  };
+
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
       throw new Error('Variable with that name already registered.');
@@ -115,7 +126,7 @@
   };
 
   MoussakaClient.prototype.connect = function () {
-    var url = this.serverUrl + path.join('/projects/',
+    var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
     superagent.put(url)
@@ -147,7 +158,7 @@
   };
 
   MoussakaClient.prototype.disconnect = function () {
-    var url = this.serverUrl + path.join('/projects/',
+    var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/', this._id, '/');
     logger.trace('Disconnecting device at: ' + url);
 
@@ -187,7 +198,7 @@
   };
 
   MoussakaClient.prototype.pollFn = function () {
-    var url = this.serverUrl + path.join('/projects/',
+    var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'sessions/', this._id, '/updates/');
 
     logger.trace('Polling with URL: ' + url);
