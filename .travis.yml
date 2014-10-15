@@ -4,6 +4,7 @@ node_js:
   - "0.10"
 
 script:
+    - npm install -g grunt-cli # Check for syntax issues
     - grunt compile # Check for syntax issues
     - npm test # Run tests
     - npm run coveralls # Upload coverage
