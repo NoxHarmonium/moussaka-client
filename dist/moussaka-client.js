@@ -151,6 +151,16 @@
     return str;
   };
 
+  MoussakaClient.prototype.getErrorDetail = function (res) {
+    var msg = 'An unknown error occurred';
+    if (res.body && res.body.detail) {
+      msg = res.body.detail;
+    } else if (res.text) {
+      msg = res.text;
+    }
+    return msg;
+  };
+
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
       throw new Error('Variable with that name already registered.');
@@ -240,7 +250,7 @@
           this.beginPolling();
         } else {
           this.emit('error', new Error('Server returned error: Status: ' +
-            res.status + ' Detail:' + res.body.detail));
+            res.status + ' Detail: ' + this.getErrorDetail(res)));
         }
 
       }.bind(this));
@@ -264,7 +274,7 @@
           this.emit('disconnect');
         } else {
           this.emit('error', new Error('Server returned error: Status: ' +
-            res.status + ' Detail:' + res.body.detail));
+            res.status + ' Detail: ' + this.getErrorDetail(res)));
         }
 
       }.bind(this));
@@ -315,7 +325,7 @@
         } else {
           return this.emit('error',
             new Error('Server returned error: Status: ' +
-              res.status + ' Detail:' + res.body.detail));
+              res.status + ' Detail: ' + this.getErrorDetail(res)));
         }
 
       }.bind(this));
