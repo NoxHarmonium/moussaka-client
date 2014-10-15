@@ -31,7 +31,7 @@
 
                 // Send back _id
                 res.statusCode = 200;
-                var returnString = JSON.stringify({ _id: _id });
+                var returnString = JSON.stringify({ data: { _id: _id }});
                 res.setHeader('Content-Type', 'application/json');
                 res.end(returnString);
             },

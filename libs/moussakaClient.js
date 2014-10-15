@@ -174,7 +174,7 @@
 
         if (res.ok) {
           this.connected = true;
-          this._id = res.body._id;
+          this._id = res.body.data._id;
           logger.trace('Connected!: _id: ' + this._id);
           this.emit('connect', this._id);
           this.beginPolling();
@@ -230,7 +230,7 @@
 
   MoussakaClient.prototype.pollFn = function () {
     utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
-      'projectId', 'projectVersion'
+      'projectId', 'projectVersion', '_id'
     ]);
 
     var url = this.getBaseUrl() + path.join('/projects/',
