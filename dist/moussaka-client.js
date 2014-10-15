@@ -111,18 +111,19 @@
   // pollInterval:      The rate to poll the server for updates (in ms)
   var MoussakaClient = function (opts) {
 
-    utils.validateRequiredOptions(opts, ['deviceName', 'apiKey',
-      'projectId', 'projectVersion'
-    ]);
-
     // Defaults
+    this.deviceName = null;
+    this.apiKey = null;
+    this.projectId = null;
+    this.projectVersion = null;
+
     this.serverUrl = 'http://localhost:3000/';
     this.pollInterval = 1000; //ms
 
     _.assign(this, opts);
 
     // Fields
-    this.registedVars = {};
+    this.registeredVars = {};
     this.connected = false;
     this.dataSchema = {};
     this.polling = false;
@@ -161,14 +162,22 @@
     return msg;
   };
 
+  MoussakaClient.prototype.getStateSnapshot = function () {
+    var snapshot = {};
+    _.each(this.registeredVars, function (registeredVar, name) {
+      snapshot[name] = registeredVar.ref.value;
+    });
+    return snapshot;
+  };
+
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
-    if (this.registedVars[name]) {
+    if (this.registeredVars[name]) {
       throw new Error('Variable with that name already registered.');
     }
 
     var ref = new Ref(value);
 
-    this.registedVars[name] = {
+    this.registeredVars[name] = {
       ref: ref,
       schema: schema
     };
@@ -184,7 +193,7 @@
     }
 
     var dataSchema = {};
-    _.each(this.registedVars, function (variable, name) {
+    _.each(this.registeredVars, function (variable, name) {
       if (!variable.schema) {
         // Create a schema by guessing
         var type = null;
@@ -228,15 +237,23 @@
   };
 
   MoussakaClient.prototype.connect = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/');
     logger.trace('Connecting device at: ' + url);
+
     superagent.put(url)
       .send({
         projectId: this.projectId,
         projectVersion: this.projectVersion,
-        deviceName: this.deviceName
+        deviceName: this.deviceName,
+        dataSchema: this.dataSchema,
+        currentState: this.getStateSnapshot()
       })
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         if (e) {
           return this.emit('error', e);
@@ -244,7 +261,7 @@
 
         if (res.ok) {
           this.connected = true;
-          this._id = res.body._id;
+          this._id = res.body.data._id;
           logger.trace('Connected!: _id: ' + this._id);
           this.emit('connect', this._id);
           this.beginPolling();
@@ -257,6 +274,10 @@
   };
 
   MoussakaClient.prototype.disconnect = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'devices/', this._id, '/');
     logger.trace('Disconnecting device at: ' + url);
@@ -264,6 +285,7 @@
     this.stopPolling();
 
     superagent.del(url)
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         if (e) {
           return this.emit('error', e);
@@ -294,6 +316,10 @@
   };
 
   MoussakaClient.prototype.pollFn = function () {
+    utils.validateRequiredOptions(this, ['deviceName', 'apiKey',
+      'projectId', 'projectVersion', '_id'
+    ]);
+
     var url = this.getBaseUrl() + path.join('/projects/',
       this.projectId, 'sessions/', this._id, '/updates/');
 
@@ -308,6 +334,7 @@
 
     this.pollReady = false;
     superagent.get(url)
+      .set('apikey', this.apiKey)
       .end(function (e, res) {
         this.pollReady = true;
         if (e) {
@@ -351,7 +378,7 @@
 
     _.each(updates, function (update, key) {
       var values = update.values;
-      var variable = this.registedVars[key];
+      var variable = this.registeredVars[key];
       var type = variable.schema.type;
       var ref = variable.ref;
 
@@ -427,13 +454,23 @@
   var logger = require('./logger.js');
 
   module.exports = {
-    validateRequiredOptions: function (object, keys) {
+    validateRequiredOptions: function (object, keys, strict) {
+      strict = strict || true;
+
       if (!object && keys.length > 0) {
         return false;
       }
       _.each(keys, function (key) {
         if (!_.contains(Object.keys(object), key)) {
           throw new Error('Missing required option: ' + key);
+        }
+        var value = object[key];
+        if (typeof (value) === 'undefined' ||
+          value === null ||
+          (typeof (value) === 'string' && value.trim() === '')) {
+          throw new Error(
+            'Option is undefined, null or empty string: ' +
+            key);
         }
       });
       return true;
