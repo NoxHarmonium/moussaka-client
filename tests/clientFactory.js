@@ -23,7 +23,8 @@
         deviceName: chance.name(),
         apiKey: chance.guid(),
         projectId: chance.guid(),
-        projectVersion: chance.word()
+        projectVersion: chance.word(),
+        serverUrl: 'http://localhost:3333/'
     };
 
     args = _.assign(defaultArgs, args);

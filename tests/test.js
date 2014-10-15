@@ -40,7 +40,7 @@
       if (!matchFound) {
         throw new Error('No matching fn found.');
       }
-    });
+    }, 3333);
 
     it('should register vars without error', function() {
       client = chai.factory.create('client');
