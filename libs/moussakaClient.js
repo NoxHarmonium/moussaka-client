@@ -43,6 +43,11 @@
     this.pollErrorCount = 0;
     this.pollReady = true;
 
+    if (opts.logLevel) {
+      logger.logLevel = opts.logLevel;
+    }
+
+
   };
 
   // Inherit EventEmitter

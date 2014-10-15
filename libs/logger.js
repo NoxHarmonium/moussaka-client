@@ -5,7 +5,10 @@
   var sprintf = require('sprintf-js')
     .sprintf;
 
-  var Logger = function () {};
+  var Logger = function (logLevel) {
+    this.logLevel = logLevel ||
+      this.severity.warning.level;
+  };
 
   Logger.prototype.severity = {
     'trace': {
@@ -39,10 +42,12 @@
       msg = 'No message provided in log statement.';
     }
 
-    console.log(sprintf('[%s] [%s]: %s', (new Date())
-      .toLocaleTimeString(),
-      severity.label,
-      msg));
+    if (severity.level >= this.logLevel) {
+      console.log(sprintf('[%s] [%s]: %s', (new Date())
+        .toLocaleTimeString(),
+        severity.label,
+        msg));
+    }
 
   };
   Logger.prototype.trace = function (msg) {

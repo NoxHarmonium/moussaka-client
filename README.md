@@ -46,12 +46,13 @@ To instantiate MoussakaClient you must pass in an object with the following keys
 
 | Option            | Desciption                                                                                    | Default                 |
 | ----------------- |-----------------------------------------------------------------------------------------------|-------------------------|
-| deviceName        | The name of the device (i.e. John Smith's PC)                                                 | None                    |
+| deviceName        | The name of the device (i.e. John Smith's PC.)                                                | None                    |
 | apiKey            | The user API key retreived from the user account settings in Moussaka.                        | None                    |
 | projectId         | The project ID retreived from the project view page in Moussaka.                              | None                    |
 | projectVersion    | A string specifying the particular version of the project that this library is used in.       | None                    |
 | serverUrl         | The url to your Moussaka server.                                                              | http://localhost:3000/  |
-| pollInterval      | The time in milliseconds between each poll to the server                                      |    1000                 |
+| pollInterval      | The time in milliseconds between each poll to the server.                                     |    1000                 |
+| logLevel          | See section below.                                                                            | 2 (warning)             |
 
 #### Installing
 
@@ -105,6 +106,19 @@ var client = new MoussakaClient(opts);
 ```
 
 - You could also just use the npm module in node and use Browserify to build your node application for the browser.
+
+#### Log Level
+
+By passing in a logLevel option you can control the detail of the log messages. The log levels are as follows:
+
+- trace: 0
+- info: 1
+- warning: 2
+- error: 3
+- exception: 4
+
+For example, to see only messages that are errors or exceptions, you would pass { logLevel: 3 } to the MoussakaClient constructor.
+
 
 
 
