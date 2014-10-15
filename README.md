@@ -52,7 +52,7 @@ To instantiate MoussakaClient you must pass in an object with the following keys
 
 #### Installing
 
-It can be used directly in a node application or in the browser as a global object.
+It can be used directly in a node application or in the browser.
 
 ##### In Node:
 
