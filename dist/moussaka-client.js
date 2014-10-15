@@ -229,8 +229,7 @@
       })
       .end(function (e, res) {
         if (e) {
-          this.emit('error', e);
-          throw e;
+          return this.emit('error', e);
         }
 
         if (res.ok) {
@@ -240,10 +239,8 @@
           this.emit('connect', this._id);
           this.beginPolling();
         } else {
-          var error = new Error('Server returned error: Status: ' +
-            res.status + ' Detail:' + res.body.detail);
-          this.emit('error', error);
-          throw error;
+          this.emit('error', new Error('Server returned error: Status: ' +
+            res.status + ' Detail:' + res.body.detail));
         }
 
       }.bind(this));
@@ -259,18 +256,15 @@
     superagent.del(url)
       .end(function (e, res) {
         if (e) {
-          this.emit('error', e);
-          throw e;
+          return this.emit('error', e);
         }
 
         if (res.ok) {
           this.connected = false;
           this.emit('disconnect');
         } else {
-          var error = new Error('Server returned error: Status: ' +
-            res.status + ' Detail:' + res.body.detail);
-          this.emit('error', error);
-          throw error;
+          this.emit('error', new Error('Server returned error: Status: ' +
+            res.status + ' Detail:' + res.body.detail));
         }
 
       }.bind(this));
@@ -312,18 +306,16 @@
               'Disconnecting...');
             this.disconnect();
           }
-          this.emit('error', e);
-          throw e;
+          return this.emit('error', e);
         }
 
         if (res.ok) {
           this.pollErrorCount = 0;
           this.applyUpdates(res.body);
         } else {
-          var error = new Error('Server returned error: Status: ' +
-            res.status + ' Detail:' + res.body.detail);
-          this.emit('error', error);
-          throw error;
+          return this.emit('error',
+            new Error('Server returned error: Status: ' +
+              res.status + ' Detail:' + res.body.detail));
         }
 
       }.bind(this));
