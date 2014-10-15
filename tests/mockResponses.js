@@ -24,6 +24,10 @@
                     .to.have.property('projectVersion', client.projectVersion);
                 expect(req.body)
                     .to.have.property('deviceName', client.deviceName);
+                expect(req.body)
+                    .to.have.property('dataSchema');
+                expect(req.body)
+                    .to.have.property('currentState');
 
                 // Send back _id
                 res.statusCode = 200;

@@ -75,6 +75,14 @@
     return msg;
   };
 
+  MoussakaClient.prototype.getStateSnapshot = function () {
+    var snapshot = {};
+    _.each(this.registedVars, function(registeredVar, name) {
+      snapshot[name] = registeredVar.ref.value;
+    });
+    return snapshot;
+  };
+
   MoussakaClient.prototype.registerVar = function (name, value, schema) {
     if (this.registedVars[name]) {
       throw new Error('Variable with that name already registered.');
@@ -154,7 +162,9 @@
       .send({
         projectId: this.projectId,
         projectVersion: this.projectVersion,
-        deviceName: this.deviceName
+        deviceName: this.deviceName,
+        dataSchema: this.dataSchema,
+        currentState: this.getStateSnapshot()
       })
       .set('apikey', this.apiKey)
       .end(function (e, res) {
