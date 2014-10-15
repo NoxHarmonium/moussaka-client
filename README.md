@@ -3,6 +3,9 @@ moussaka-client
 
 #### A javascript library that allows you to use javascript applications with the [Moussaka](https://github.com/NoxHarmonium/moussaka) prototyping framework.
 
+[![Coverage Status](https://img.shields.io/coveralls/NoxHarmonium/moussaka-client.svg)](https://coveralls.io/r/NoxHarmonium/moussaka-client?branch=master) [![Build Status](https://travis-ci.org/NoxHarmonium/moussaka-client.svg?branch=master)](https://travis-ci.org/NoxHarmonium/moussaka-client)
+
+
 #### Usage Example
 ```javascript
   // Instantiate client
