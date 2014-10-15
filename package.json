@@ -22,11 +22,9 @@
   },
   "homepage": "https://github.com/NoxHarmonium/moussaka-client-js",
   "dependencies": {
-    "extend": "^2.0.0",
     "lodash": "^2.4.1",
     "sprintf-js": "0.0.7",
-    "superagent": "^0.20.0",
-    "wolfy87-eventemitter": "^4.2.6"
+    "superagent": "^0.20.0"
   },
   "devDependencies": {
     "body-parser": "^1.9.0",
