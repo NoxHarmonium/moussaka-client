@@ -16,9 +16,9 @@
         if (!_.contains(Object.keys(object), key)) {
           throw new Error('Missing required option: ' + key);
         }
-        var value = !object[key];
+        var value = object[key];
         if (typeof(value) === 'undefined' ||
-          value === 'null' ||
+          value === null ||
           (typeof(value) === 'string' && value.trim() === '')) {
             throw new Error('Option is undefined, null or empty string: ' + key);
         }
