@@ -42,6 +42,17 @@
     return 'color';
   };
 
+  Color.prototype.serialize = function() {
+    return {
+      values: this.getValues()
+    };
+  };
+
+  Color.prototype.deserialize = function(data) {
+    this.setValues(data.values);
+  };
+
+
   module.exports = Color;
 
 })(require, module);

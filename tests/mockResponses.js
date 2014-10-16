@@ -1,6 +1,7 @@
 (function (require, module) {
   'use strict';
     var logger = require('../libs/logger.js');
+    var _ = require('lodash');
     var chai = require('chai');
 
     // Use expect style
@@ -15,6 +16,8 @@
         this.updates = {};
         this.fns = {
             '\/projects\/.+\/devices\/$': function(req, res) {
+                var registeredVars = Object.keys(that.client.registeredVars);
+
                 expect(req.method).to.equal('PUT');
                 expect(req.headers)
                     .to.have.property('apikey');
@@ -26,8 +29,17 @@
                     .to.have.property('deviceName', client.deviceName);
                 expect(req.body)
                     .to.have.property('dataSchema');
+                expect(Object.keys(req.body.dataSchema))
+                    .to.have.length(registeredVars.length);
                 expect(req.body)
                     .to.have.property('currentState');
+                expect(Object.keys(req.body.currentState))
+                    .to.have.length(registeredVars.length);
+
+                _.each(req.body.currentState, function(value, key) {
+                    expect(value)
+                        .to.have.property('values');
+                });
 
                 // Send back _id
                 res.statusCode = 200;
@@ -55,7 +67,7 @@
 
                 // Send back _id
                 res.statusCode = 200;
-                var returnString = '{data:{}}';
+                var returnString = JSON.stringify({ data: {} });
                 res.setHeader('Content-Type', 'application/json');
                 res.end(returnString);
             },

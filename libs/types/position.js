@@ -44,6 +44,16 @@
     return 'position';
   };
 
+  Color.prototype.serialize = function() {
+    return {
+      values: this.getValues()
+    };
+  };
+
+  Color.prototype.deserialize = function(data) {
+    this.setValues(data.values);
+  };
+
   module.exports = Position;
 
 })(require, module);

@@ -75,11 +75,35 @@
     return msg;
   };
 
+  MoussakaClient.prototype.serializeValue = function(value) {
+    switch (typeof(value)) {
+      case 'boolean':
+        return { values: { b: value } };
+      case 'number':
+        return { values: { n: value } };
+      case 'string':
+        return { values: { s: value } };
+      case 'object':
+        if (value.serialize) {
+          return value.serialize();
+        } else {
+          throw new Error('Cannot serialize object without serialize method.');
+        }
+      default:
+        throw new Error('Cannot serialize undefined or unsupported variable.');
+    };
+  };
+
   MoussakaClient.prototype.getStateSnapshot = function () {
     var snapshot = {};
     _.each(this.registeredVars, function (registeredVar, name) {
-      snapshot[name] = registeredVar.ref.value;
-    });
+      var value = registeredVar.ref.value;
+      if (typeof(value) === 'undefined' ||
+        value === null) {
+        return true; // Skip
+      }
+      snapshot[name] = this.serializeValue(value);
+    }, this);
     return snapshot;
   };
 
