@@ -16,11 +16,13 @@
       } else {
         throw new Error('Value for x required.');
       }
+    } else {
+      this.x = x;
     }
 
     // Defaults
-    this.y = this.y || 0;
-    this.z = this.z || 0;
+    this.y = this.y || y || 0;
+    this.z = this.z || z || 0;
 
     utils.validateRequiredOptions(this, ['x', 'y', 'z']);
   };
@@ -44,13 +46,13 @@
     return 'position';
   };
 
-  Color.prototype.serialize = function() {
+  Position.prototype.serialize = function () {
     return {
       values: this.getValues()
     };
   };
 
-  Color.prototype.deserialize = function(data) {
+  Position.prototype.deserialize = function (data) {
     this.setValues(data.values);
   };
 

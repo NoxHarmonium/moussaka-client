@@ -2,6 +2,7 @@
   'use strict';
 
   var Color = require('../libs/types/color.js');
+  var Position = require('../libs/types/position.js');
   var chance = require('chance').Chance();
   var MockServer = require('./mockServer.js');
   var logger = require('../libs/logger.js');
@@ -22,6 +23,7 @@
     var aNumber;
     var aString;
     var aColor;
+    var aPosition;
     var _id = chance.guid();
     var mockResponses;
     var pollInterval = 50;
@@ -49,6 +51,7 @@
       aNumber = client.registerVar('aNumber', 5);
       aString = client.registerVar('aString', 'stringme');
       aColor = client.registerVar('aColor', new Color(1, 0, 0, 1));
+      aPosition = client.registerVar('aPosition', new Position(22, 56));
       mockResponses = new MockResponses(client, _id);
     });
 
@@ -61,8 +64,12 @@
     it('should connect to server', function(done) {
 
       client.on('connect', function() {
-        expect(client._id).to.eql(_id);
-        done();
+        try {
+          expect(client._id).to.eql(_id);
+          done();
+        } catch(ex) {
+            done(ex);
+        }
       });
 
       client.connect();
@@ -73,10 +80,14 @@
       logger.info('Waiting to test polling');
       mockResponses.stats.pollCount = 0;
       setTimeout(function() {
-        // Variability for slow test VMs
-        expect(mockResponses.stats.pollCount)
-          .to.be.within(pollsToCheck - 1, pollsToCheck + 1);
-        done();
+        try {
+          // Variability for slow test VMs
+          expect(mockResponses.stats.pollCount)
+            .to.be.within(pollsToCheck - 1, pollsToCheck + 1);
+          done();
+        } catch(ex) {
+            done(ex);
+        }
       }, pollInterval * pollsToCheck);
     });
 
@@ -90,25 +101,28 @@
         },
         'aColor': {
           values: { r: 0, g: 0, b: 1, a: 0.5 }
+        },
+        'aPosition': {
+          values: { x: 3, y: 2, z: 1 }
         }
       };
 
       logger.info('Waiting for to test updates');
 
       setTimeout(function() {
-        expect(aNumber.value)
-          .to.eql(50);
-        expect(aString.value)
-          .to.eql('newString');
-        expect(aColor.value)
-          .to.have.property('r', 0);
-        expect(aColor.value)
-          .to.have.property('g', 0);
-        expect(aColor.value)
-          .to.have.property('b', 1);
-        expect(aColor.value)
-          .to.have.property('a', 0.5);
-        done();
+        try {
+            expect(aNumber.value)
+              .to.eql(50);
+            expect(aString.value)
+              .to.eql('newString');
+            expect(aColor.value)
+              .to.include({ r: 0, g: 0, b: 1, a: 0.5 });
+            expect(aPosition.value)
+              .to.include({ x: 3, y: 2, z: 1 });
+            done();
+          } catch(ex) {
+            done(ex);
+          }
       }, pollInterval * 5);
     });
 
@@ -117,10 +131,15 @@
         mockResponses.stats.pollCount = 0;
         logger.info('Waiting to check if polling stopped');
           setTimeout(function() {
-            // Variability for slow test VMs
-            expect(mockResponses.stats.pollCount)
-              .to.eql(0);
-            done();
+            try {
+              // Variability for slow test VMs
+              expect(mockResponses.stats.pollCount)
+                .to.eql(0);
+              done();
+            } catch(ex) {
+              done(ex);
+            }
+
           }, pollInterval * 5);
       });
 

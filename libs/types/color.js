@@ -42,13 +42,13 @@
     return 'color';
   };
 
-  Color.prototype.serialize = function() {
+  Color.prototype.serialize = function () {
     return {
       values: this.getValues()
     };
   };
 
-  Color.prototype.deserialize = function(data) {
+  Color.prototype.deserialize = function (data) {
     this.setValues(data.values);
   };
 

@@ -75,30 +75,43 @@
     return msg;
   };
 
-  MoussakaClient.prototype.serializeValue = function(value) {
-    switch (typeof(value)) {
-      case 'boolean':
-        return { values: { b: value } };
-      case 'number':
-        return { values: { n: value } };
-      case 'string':
-        return { values: { s: value } };
-      case 'object':
-        if (value.serialize) {
-          return value.serialize();
-        } else {
-          throw new Error('Cannot serialize object without serialize method.');
+  MoussakaClient.prototype.serializeValue = function (value) {
+    switch (typeof (value)) {
+    case 'boolean':
+      return {
+        values: {
+          b: value
         }
-      default:
-        throw new Error('Cannot serialize undefined or unsupported variable.');
-    };
+      };
+    case 'number':
+      return {
+        values: {
+          n: value
+        }
+      };
+    case 'string':
+      return {
+        values: {
+          s: value
+        }
+      };
+    case 'object':
+      if (value.serialize) {
+        return value.serialize();
+      } else {
+        throw new Error('Cannot serialize object without serialize method.');
+      }
+      break;
+    default:
+      throw new Error('Cannot serialize undefined or unsupported variable.');
+    }
   };
 
   MoussakaClient.prototype.getStateSnapshot = function () {
     var snapshot = {};
     _.each(this.registeredVars, function (registeredVar, name) {
       var value = registeredVar.ref.value;
-      if (typeof(value) === 'undefined' ||
+      if (typeof (value) === 'undefined' ||
         value === null) {
         return true; // Skip
       }
