@@ -413,7 +413,7 @@
       return;
     }
 
-    _.each(updates, function (update, key) {
+    _.forIn(updates, function (update, key) {
       var values = update.values;
       var variable = this.registeredVars[key];
       var type = variable.schema.type;
