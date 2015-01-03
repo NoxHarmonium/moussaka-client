@@ -31,9 +31,9 @@ moussaka-client
     // and update the values accordingly.
 
     console.log(aNumber.value);
-    console.log(aNumber.aString);
-    console.log(aNumber.aColor.toString());
-    console.log(aNumber.validatedNumber);
+    console.log(aString.value);
+    console.log(aColor.value.toString());
+    console.log(validatedNumber.value);
   }
 
   // Stop polling afterwards
