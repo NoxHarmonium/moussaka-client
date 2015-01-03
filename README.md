@@ -14,7 +14,7 @@ moussaka-client
   // Auto detect variable type
   var aNumber = client.registerVar('aNumber', 5);
   var aString = client.registerVar('aString', 'string beans');
-  var aColor  = client.registerVar('aColor', new Color(1, 0, 0, 1)); // Moussaka type
+  var aColor  = client.registerVar('aColor', new MoussakaClient.types.Color(1, 0, 0, 1)); // Moussaka type
 
   // Define specific schema
   var validatedNumber = client.registerVar('validatedNumber', 5, {

@@ -3,14 +3,22 @@
 (function (require, module) {
   'use strict';
 
+  // Load main module
   var logger = require('./libs/logger.js');
   var MoussakaClient = require('./libs/moussakaClient.js');
+
+  // Expose types
+  MoussakaClient.types = {};
+  MoussakaClient.types.Color = require('./libs/types/color.js');
+  MoussakaClient.types.Position = require('./libs/types/position.js');
+
+  // Export
   logger.trace('MoussakaClient module loaded.');
   module.exports = MoussakaClient;
 
 })(require, module);
 
-},{"./libs/logger.js":2,"./libs/moussakaClient.js":3}],2:[function(require,module,exports){
+},{"./libs/logger.js":2,"./libs/moussakaClient.js":3,"./libs/types/color.js":5,"./libs/types/position.js":6}],2:[function(require,module,exports){
 // Logging
 (function (require, module) {
   'use strict';
@@ -84,7 +92,7 @@
 
 })(require, module);
 
-},{"sprintf-js":13}],3:[function(require,module,exports){
+},{"sprintf-js":15}],3:[function(require,module,exports){
 // Main class
 (function (require, module) {
   'use strict';
@@ -450,7 +458,7 @@
 
 })(require, module);
 
-},{"./logger.js":2,"./ref.js":4,"./utils.js":5,"events":6,"lodash":12,"path":8,"superagent":14,"util":11}],4:[function(require,module,exports){
+},{"./logger.js":2,"./ref.js":4,"./utils.js":7,"events":8,"lodash":14,"path":10,"superagent":16,"util":13}],4:[function(require,module,exports){
 // Variable wrapper
 (function (require, module) {
   'use strict';
@@ -483,6 +491,129 @@
 })(require, module);
 
 },{"./logger.js":2}],5:[function(require,module,exports){
+// Color Type
+(function (require, module) {
+  'use strict';
+
+  var utils = require('../utils.js');
+
+  var Color = function (r, g, b, a) {
+    if (arguments.length === 1) {
+      // Alternate syntax (pass in object)
+      var obj = r;
+      this.setValues(obj);
+    } else if (arguments.length === 4) {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
+    } else {
+      throw new Error('Invalid number of arguments.');
+    }
+
+    utils.validateRequiredOptions(this, ['r', 'g', 'b', 'a']);
+  };
+
+  Color.prototype.setValues = function (values) {
+    utils.validateRequiredOptions(values, ['r', 'g', 'b', 'a']);
+    this.r = values.r;
+    this.g = values.g;
+    this.b = values.b;
+    this.a = values.a;
+  };
+
+  Color.prototype.getValues = function () {
+    return {
+      r: this.r,
+      g: this.g,
+      b: this.b,
+      a: this.a
+    };
+  };
+
+  Color.prototype.getType = function () {
+    return 'color';
+  };
+
+  Color.prototype.serialize = function () {
+    return {
+      values: this.getValues()
+    };
+  };
+
+  Color.prototype.deserialize = function (data) {
+    this.setValues(data.values);
+  };
+
+
+  module.exports = Color;
+
+})(require, module);
+
+},{"../utils.js":7}],6:[function(require,module,exports){
+// Position Type
+(function (require, module) {
+  'use strict';
+
+  var utils = require('../utils.js');
+
+  var Position = function (x, y, z) {
+    if (arguments.length === 1) {
+      if (typeof x === 'object') {
+        // Alternate syntax (pass in object)
+        var obj = x;
+        this.setValues(obj);
+      } else if (typeof x === 'number') {
+        // Only one param, others are default
+        this.x = x;
+      } else {
+        throw new Error('Value for x required.');
+      }
+    } else {
+      this.x = x;
+    }
+
+    // Defaults
+    this.y = this.y || y || 0;
+    this.z = this.z || z || 0;
+
+    utils.validateRequiredOptions(this, ['x', 'y', 'z']);
+  };
+
+  Position.prototype.setValues = function (values) {
+    utils.validateRequiredOptions(values, ['x']);
+    this.x = values.x;
+    this.y = values.y || 0;
+    this.z = values.z || 0;
+  };
+
+  Position.prototype.getValues = function () {
+    return {
+      x: this.r,
+      y: this.g,
+      z: this.b,
+    };
+  };
+
+  Position.prototype.getType = function () {
+    return 'position';
+  };
+
+  Position.prototype.serialize = function () {
+    return {
+      values: this.getValues()
+    };
+  };
+
+  Position.prototype.deserialize = function (data) {
+    this.setValues(data.values);
+  };
+
+  module.exports = Position;
+
+})(require, module);
+
+},{"../utils.js":7}],7:[function(require,module,exports){
 // Utils
 (function (require, module) {
   'use strict';
@@ -516,7 +647,7 @@
 
 })(require, module);
 
-},{"./logger.js":2,"lodash":12}],6:[function(require,module,exports){
+},{"./logger.js":2,"lodash":14}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -819,7 +950,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -844,7 +975,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1072,7 +1203,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":9}],9:[function(require,module,exports){
+},{"_process":11}],11:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1137,14 +1268,14 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1734,7 +1865,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":10,"_process":9,"inherits":7}],12:[function(require,module,exports){
+},{"./support/isBuffer":12,"_process":11,"inherits":9}],14:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -8523,7 +8654,7 @@ function hasOwnProperty(obj, prop) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*! sprintf.js | Copyright (c) 2007-2013 Alexandru Marasteanu <hello at alexei dot ro> | 3 clause BSD license */
 
 (function(ctx) {
@@ -8659,7 +8790,7 @@ function hasOwnProperty(obj, prop) {
 	ctx.vsprintf = vsprintf;
 })(typeof exports != "undefined" ? exports : window);
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -9737,7 +9868,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":15,"reduce":16}],15:[function(require,module,exports){
+},{"emitter":17,"reduce":18}],17:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -9903,7 +10034,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
