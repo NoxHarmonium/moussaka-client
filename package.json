@@ -1,6 +1,6 @@
 {
   "name": "moussaka-client",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A javascript library that allows you to use javascript applications with the Moussaka prototyping framework.",
   "main": "index.js",
   "scripts": {
