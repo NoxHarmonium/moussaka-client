@@ -144,7 +144,7 @@
 
     var dataSchema = {};
     _.each(this.registeredVars, function (variable, name) {
-      if (!variable.schema) {
+      if (!variable.schema || !variable.schema.type) {
         // Create a schema by guessing
         var type = null;
         var ref = variable.ref;
@@ -174,9 +174,11 @@
             'Please pass in a schema object.');
         }
 
-        variable.schema = {
-          type: type
-        };
+        // Merge existing schema (if any) into schema with detected type
+        variable.schema =
+          _.extend({
+            type: type
+          }, variable.schema);
       }
 
       dataSchema[name] = variable.schema;
