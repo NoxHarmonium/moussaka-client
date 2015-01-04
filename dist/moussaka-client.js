@@ -591,9 +591,9 @@
 
   Position.prototype.getValues = function () {
     return {
-      x: this.r,
-      y: this.g,
-      z: this.b,
+      x: this.x,
+      y: this.y,
+      z: this.z,
     };
   };
 
